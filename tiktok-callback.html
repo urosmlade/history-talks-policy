@@ -1,0 +1,49 @@
+<!doctype html>
+<!--
+  TikTok OAuth redirect target. Copy this file into the history-talks-policy
+  repo (GitHub Pages) as callback.html, so it is served at:
+      https://urosmlade.github.io/history-talks-policy/callback.html
+  That exact URL is what must be registered as the Redirect URI in the TikTok
+  developer portal (Login Kit), and what TIKTOK_REDIRECT_URI in backend/.env
+  is set to. TikTok rejects http:// and localhost redirects, which is why the
+  login flow cannot use a local listener and pastes the code in by hand.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Authorization code</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 640px; margin: 4rem auto; padding: 0 1.5rem; line-height: 1.6; color: #1a1a1a; }
+  h1 { font-size: 1.3rem; }
+  code { display: block; background: #f4f4f5; border: 1px solid #d4d4d8; border-radius: 6px;
+         padding: 1rem; margin: 1rem 0; word-break: break-all; font-size: 0.95rem; }
+  button { font: inherit; padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid #d4d4d8;
+           background: #fff; cursor: pointer; }
+  .err { color: #b91c1c; }
+</style>
+</head>
+<body>
+  <h1>Authorization code</h1>
+  <p id="msg">Copy this code and paste it into the terminal:</p>
+  <code id="code">(none)</code>
+  <button id="copy">Copy</button>
+  <script>
+    var q = new URLSearchParams(location.search);
+    var code = q.get("code"), err = q.get("error");
+    var el = document.getElementById("code");
+    if (err) {
+      document.getElementById("msg").className = "err";
+      document.getElementById("msg").textContent = "Authorization failed: " + err +
+        (q.get("error_description") ? " - " + q.get("error_description") : "");
+      el.textContent = "(no code returned)";
+    } else if (code) {
+      el.textContent = code;
+    }
+    document.getElementById("copy").onclick = function () {
+      navigator.clipboard.writeText(el.textContent);
+      this.textContent = "Copied";
+    };
+  </script>
+</body>
+</html>
